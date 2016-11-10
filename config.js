@@ -32,6 +32,14 @@ var conf = convict({
             doc: 'the log file rotate frequency',
             default: "daily"
         }
+    },
+    db: {
+        mongodb: {
+            url: {
+                doc: "mongodb url",
+                "default": "mongodb://localhost/sleepdb"
+            }
+        }
     }
 
 });

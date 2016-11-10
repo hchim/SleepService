@@ -14,6 +14,7 @@
     "morgan": "~1.7.0",
     "serve-favicon": "~2.3.0",
     "convict": "~1.5.0",
-    "file-stream-rotator": "~0.0.7"
+    "file-stream-rotator": "~0.0.7",
+    "mongoose": "~4.6.6"
   }
 }

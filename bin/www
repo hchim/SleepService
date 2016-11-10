@@ -8,6 +8,7 @@ var app = require('../app');
 var debug = require('debug')('SleepService:server');
 var http = require('http');
 var conf = require("../config");
+var mongoose = require('mongoose');
 
 /**
  * Get port from environment and store in Express.
@@ -70,4 +71,21 @@ function onListening() {
     ? 'pipe ' + addr
     : 'port ' + addr.port;
   debug('Listening on ' + bind);
+  // connect to database
+  connect_db();
+}
+
+function connect_db() {
+  mongoose.connect(conf.get('db.mongodb.url'), function (error) {
+    if(error) {
+      console.error(error);
+      return;
+    }
+
+    debug("Connected to mongodb.");
+    // var SleepRecord = require("../models/SleepRecord");
+    // var sr = new SleepRecord({userId: "test", fallAsleepTime: Date.now(), wakeupTime: Date.now() + 10});
+    // sr.save();
+
+  });
 }

@@ -31,7 +31,7 @@ if (env === 'development') {
 // no stack traces leaked to user
 router.use(function(err, req, res, next) {
   res.status(err.status || 500);
-  console.log(process.env.NODE_ENV);
+  console.error(err.message);
   res.json({
     message: err.message
   });
