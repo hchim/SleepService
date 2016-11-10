@@ -3,7 +3,8 @@
  */
 var express = require('express');
 var router = express.Router();
-var env = process.env.NODE_ENV || 'development';
+var conf = require("../config");
+var env = conf.get("env");
 
 //catch 404 and forward to error handler
 router.use(function(req, res, next) {
