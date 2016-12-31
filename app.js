@@ -11,6 +11,7 @@ var conf = require("./config");
 var errorHandler = require('./middlewares/rest_error_handler');
 //routes
 var routes = require('./routes/index');
+var babyInfos = require('./routes/babyinfo');
 
 var app = express();
 
@@ -36,6 +37,7 @@ app.use(cookieParser());
 
 // setup routes
 app.use('/', routes);
+app.use('/babyinfos', babyInfos);
 
 app.use(errorHandler);
 

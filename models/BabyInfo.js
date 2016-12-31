@@ -4,8 +4,8 @@ var conf = require("../config");
 var babyInfoSchema = mongoose.Schema({
     userId: String,
     name: String,
-    birtyday: Date,
-    gender: String,
+    birthday: Date,
+    gender: Number,
 });
 
 // indexes
