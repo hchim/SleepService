@@ -86,6 +86,8 @@ function connect_db() {
     // var SleepRecord = require("../models/SleepRecord");
     // var sr = new SleepRecord({userId: "test", fallAsleepTime: Date.now(), wakeupTime: Date.now() + 10});
     // sr.save();
-
+    if (conf.get("env") === 'development') {
+      mongoose.set('debug', true);
+    }
   });
 }

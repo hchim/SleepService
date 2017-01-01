@@ -32,7 +32,7 @@ router.post("/:userid", function(req, res, next) {
 
     if (baby == null) {
       baby = new BabyInfo({
-        "userId": req.params.userId,
+        "userId": req.params.userid,
         "name": req.body.name,
         "birthday": new Date(req.body.birthday),
         "gender": req.body.gender
