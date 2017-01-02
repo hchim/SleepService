@@ -17,21 +17,6 @@ if (conf.get("env") === 'production') {
     sleepRecordSchema.set('autoIndex', true);
 }
 
-// methods
-
-/*
- Find the sleep records of the user in the time range [from, to].
- */
-sleepRecordSchema.statics.findByUserId = function (userid, from, to, callback) {
-    this.find({
-        userId: userid ,
-        fallAsleepTime: {$gt: from, $lt: to}
-    })
-        .sort({ fallAsleepTime: -1 })
-        .select({ fallAsleepTime: 1, wakeupTime: 1 })
-        .exec(callback);
-}
-
 var SleepRecord = mongoose.model('SleepRecord', sleepRecordSchema);
 
 module.exports = SleepRecord;

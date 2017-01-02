@@ -10,7 +10,7 @@ var conf = require("./config");
 //user defined middleware
 var errorHandler = require('./middlewares/rest_error_handler');
 //routes
-var routes = require('./routes/index');
+var sleepRecords = require('./routes/sleeprecords');
 var babyInfos = require('./routes/babyinfo');
 
 var app = express();
@@ -36,7 +36,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 
 // setup routes
-app.use('/', routes);
+app.use('/sleeprecs', sleepRecords);
 app.use('/babyinfos', babyInfos);
 
 app.use(errorHandler);
