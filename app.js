@@ -12,6 +12,7 @@ var errorHandler = require('./middlewares/rest_error_handler');
 //routes
 var sleepRecords = require('./routes/sleeprecords');
 var babyInfos = require('./routes/babyinfo');
+var index = require('./routes/index');
 
 var app = express();
 
@@ -36,6 +37,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 
 // setup routes
+app.use('/', index);
 app.use('/sleeprecs', sleepRecords);
 app.use('/babyinfos', babyInfos);
 
