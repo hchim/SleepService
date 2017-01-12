@@ -16,6 +16,7 @@ var mongoose = require('mongoose');
 
 var port = conf.get('server.port');
 var ip = conf.get("server.ip");
+var dbUrl = conf.get('db.mongodb.url');
 
 app.set('port', port);
 
@@ -32,6 +33,30 @@ var server = http.createServer(app);
 server.listen(port, ip);
 server.on('error', onError);
 server.on('listening', onListening);
+
+// Mongoose listeners
+mongoose.connection.on('disconnected', function(){
+  console.log('Lost MongoDB connection... : ' + dbUrl);
+  //Reconnect every 5 seconds.
+  setTimeout(connect_db, 5000);
+});
+
+mongoose.connection.on('connected', function() {
+  console.log('Connection established to : ' + dbUrl);
+});
+
+mongoose.connection.once('open', function() {
+  console.log('Connection open');
+});
+
+mongoose.connection.on('error', function() {
+  console.log('Could not connect to : ' + dbUrl);
+  mongoose.disconnect();
+});
+
+mongoose.connection.on('reconnected', function() {
+  console.log('Reconnected to : ' + dbUrl);
+});
 
 /**
  * Event listener for HTTP server "error" event.
@@ -76,16 +101,23 @@ function onListening() {
 }
 
 function connect_db() {
-  mongoose.connect(conf.get('db.mongodb.url'), function (error) {
+  var options = {
+    server:{
+      auto_reconnect:true,
+      socketOptions: { keepAlive: 1, connectTimeoutMS: 30000 }
+    },
+    replset: {
+      socketOptions: { keepAlive: 1, connectTimeoutMS : 30000 }
+    }
+  };
+
+  mongoose.connect(dbUrl, options, function (error) {
     if(error) {
       console.error(error);
       return;
     }
 
     debug("Connected to mongodb.");
-    // var SleepRecord = require("../models/SleepRecord");
-    // var sr = new SleepRecord({userId: "test", fallAsleepTime: Date.now(), wakeupTime: Date.now() + 10});
-    // sr.save();
     if (conf.get("env") === 'development') {
       mongoose.set('debug', true);
     }
