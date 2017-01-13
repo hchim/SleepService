@@ -50,10 +50,18 @@ router.post("/:userid", function(req, res, next) {
         });
       });
     } else {
-      res.json({
-        name: baby.name,
-        birthday: baby.birthday,
-        gender: baby.gender,
+      baby.name = req.body.name;
+      baby.gender = req.body.gender;
+      baby.birthday = new Date(req.body.birthday);
+
+      baby.save(function (err, baby) {
+        if (err) return next(err);
+
+        res.json({
+          name: baby.name,
+          birthday: baby.birthday,
+          gender: baby.gender,
+        });
       });
     }
   });
