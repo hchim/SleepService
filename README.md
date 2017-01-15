@@ -11,7 +11,11 @@ Routes are defined in the routes directory.
 
 ### Production mode
 
->npm start
+>NODE_ENV=production npm start
+
+### Test mode
+
+>NODE_ENV=test npm start
 
 ### Debug mode
 
@@ -24,3 +28,14 @@ The following command will start the server on port 9000.
 ```
 $PORT=9000 npm start
 ```
+
+##Test
+
+- start the service in test mode.
+- run `npm test`.
+
+##About timezone
+
+1. Mongodb uses UTC time by default. Date range query will be converted to UTC time.
+
+

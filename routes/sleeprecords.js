@@ -1,6 +1,17 @@
 var express = require('express');
 var router = express.Router();
 var SleepRecord = require('../models/SleepRecord');
+var moment = require('moment-timezone');
+var TZDate = require('../utils/TZDate');
+
+/*
+ * datetime: yyyy-MM-dd hh:mm:ss
+ * timezone: timezone string
+ */
+function toDateOfTimezone(datetime, timezone) {
+    var date_tz = moment.tz(datetime, timezone);
+    return new Date(date_tz.toString());
+}
 
 /**
  * :userid : get the records of the given user.
@@ -8,6 +19,8 @@ var SleepRecord = require('../models/SleepRecord');
  * :todate : fallAsleepTime <= todate + 23:59:59
  *
  * Return format:
+ *
+ * records and times in assending order.
  *
  * {
  *   "records": [
@@ -26,53 +39,60 @@ var SleepRecord = require('../models/SleepRecord');
  *   ]
  * }
  */
-router.get("/:userid/:fromdate/:todate", function(req, res, next) {
+router.get("/:userid/:fromdate/:todate/:timezone", function(req, res, next) {
     var userId = req.params.userid;
-    var to = new Date(req.params.todate + "T23:59:59Z");
-    var from = new Date(req.params.fromdate + "T00:00:00Z");
+    var timezone = req.params.timezone;
 
-    SleepRecord.find({ userId: userId, wakeupTime: { $gte: from }, fallAsleepTime: { $lte: to } }, function (err, records) {
+    var to = toDateOfTimezone(req.params.todate + " 23:59:59", timezone);
+    var from = toDateOfTimezone(req.params.fromdate + " 00:00:00", timezone);
+
+    SleepRecord.find({ userId: userId, wakeupTime: { $gte: from }, fallAsleepTime: { $lte: to } })
+        .sort({fallAsleepTime: 1})
+        .exec(function (err, records) {
         if (err) return next(err);
 
         var arr = [];
-        var date = 0;
+        var date = null;
         var val = {};
 
         for (var i = 0, len = records.length; i < len; i++) {
             var rec = records[i];
+            //convert date time of the timezone
+            var tzFallAsleep = new TZDate(rec.fallAsleepTime, timezone);
+            var tzWakeup = new TZDate(rec.wakeupTime, timezone);
+            var tzFallAsleepStr = tzFallAsleep.toString();
+            var tzWakeupStr = tzWakeup.toString();
+
             // date changed
-            if (date != rec.fallAsleepTime.getDate()) {
-                date = rec.fallAsleepTime.getDate();
-                val = {"date": rec.fallAsleepTime, "times": [], "quality": 0};
+            if (date == null || !date.sameDay(tzFallAsleep)) {
+                date = tzFallAsleep;
+                val = {"date": tzFallAsleepStr, "times": [], "quality": 0};
                 arr.push(val);
             }
 
-            if (rec.fallAsleepTime.getDate() != rec.wakeupTime.getDate()) {
+            if (tzFallAsleep.date != tzWakeup.date) {
+                tzFallAsleep.hour = 23;
+                tzFallAsleep.minute = 59;
+                tzFallAsleep.second = 59;
                 val.times.push({
-                    "fallAsleepTime": rec.fallAsleepTime,
-                    "wakeupTime": new Date(
-                        rec.fallAsleepTime.getYear(),
-                        rec.fallAsleepTime.getMonth(),
-                        rec.fallAsleepTime.getDate(),
-                        23, 59, 59
-                    ),
+                    "fallAsleepTime": tzFallAsleepStr,
+                    "wakeupTime": tzFallAsleep.toString(),
                 });
 
-                date = rec.wakeupTime.getDate();
-                val = {"date": rec.wakeupTime, "times": [], "quality": 0};
+                date = tzWakeup;
+                val = {"date": tzWakeupStr, "times": [], "quality": 0};
                 arr.push(val);
+                tzWakeup.hour = 0;
+                tzWakeup.minute = 0;
+                tzWakeup.second = 0;
                 val.times.push({
-                    "fallAsleepTime": new Date(
-                        rec.wakeupTime.getYear(),
-                        rec.wakeupTime.getMonth(),
-                        rec.wakeupTime.getDate()
-                    ),
-                    "wakeupTime": rec.wakeupTime,
+                    "fallAsleepTime": tzWakeup.toString(),
+                    "wakeupTime": tzWakeupStr,
                 });
             } else {
                 val.times.push({
-                    "fallAsleepTime": rec.fallAsleepTime,
-                    "wakeupTime": rec.wakeupTime,
+                    "fallAsleepTime": tzFallAsleepStr,
+                    "wakeupTime": tzWakeupStr,
                 });
             }
         }

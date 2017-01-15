@@ -23,7 +23,10 @@ router.get("/:userid", function(req, res, next) {
   });
 });
 
-/* Add or update baby info. */
+/*
+* Add or update baby info.
+* req.body.birthday: in 'yyyy-MM-dd' format
+*/
 router.post("/:userid", function(req, res, next) {
   BabyInfo.findOne({ 'userId': req.params.userid }, function (err, baby) {
     if (err) {
@@ -34,7 +37,7 @@ router.post("/:userid", function(req, res, next) {
       baby = new BabyInfo({
         "userId": req.params.userid,
         "name": req.body.name,
-        "birthday": new Date(req.body.birthday),
+        "birthday": req.body.birthday,
         "gender": req.body.gender
       });
 
@@ -52,7 +55,7 @@ router.post("/:userid", function(req, res, next) {
     } else {
       baby.name = req.body.name;
       baby.gender = req.body.gender;
-      baby.birthday = new Date(req.body.birthday);
+      baby.birthday = req.body.birthday;
 
       baby.save(function (err, baby) {
         if (err) return next(err);

@@ -17,6 +17,7 @@ var mongoose = require('mongoose');
 var port = conf.get('server.port');
 var ip = conf.get("server.ip");
 var dbUrl = conf.get('db.mongodb.url');
+var env = conf.get('env');
 
 app.set('port', port);
 
@@ -115,7 +116,7 @@ function connect_db() {
     }
 
     debug("Connected to mongodb.");
-    if (conf.get("env") === 'development') {
+    if (env === 'development' || env === 'test') {
       mongoose.set('debug', true);
     }
   });

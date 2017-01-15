@@ -7,8 +7,6 @@ var FileStreamRotator = require('file-stream-rotator');
 var fs = require('fs');
 var conf = require("./config");
 
-//user defined middleware
-var errorHandler = require('./middlewares/rest_error_handler');
 //routes
 var sleepRecords = require('./routes/sleeprecords');
 var babyInfos = require('./routes/babyinfo');
@@ -41,6 +39,35 @@ app.use('/', index);
 app.use('/sleeprecs', sleepRecords);
 app.use('/babyinfos', babyInfos);
 
-app.use(errorHandler);
+//catch 404 and forward to error handler
+app.use(function(req, res, next) {
+    var err = new Error('404 Not Found');
+    err.status = 404;
+    next(err);
+});
+
+// error handlers
+
+// development error handler
+// will print stack trace
+if (conf.get("env") === 'development') {
+    app.use(function(err, req, res, next) {
+        res.status(err.status || 500);
+        res.json({
+            message: err.message,
+            error: err
+        });
+    });
+}
+
+// production error handler
+// no stack traces leaked to user
+app.use(function(err, req, res, next) {
+    res.status(err.status || 500);
+    console.error(err.message);
+    res.json({
+        message: err.message
+    });
+});
 
 module.exports = app;
