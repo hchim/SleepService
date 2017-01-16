@@ -41,7 +41,7 @@ function toDateOfTimezone(datetime, timezone) {
  */
 router.get("/:userid/:fromdate/:todate/:timezone", function(req, res, next) {
     var userId = req.params.userid;
-    var timezone = req.params.timezone;
+    var timezone = req.params.timezone.replace('-', '/');
 
     var to = toDateOfTimezone(req.params.todate + " 23:59:59", timezone);
     var from = toDateOfTimezone(req.params.fromdate + " 00:00:00", timezone);

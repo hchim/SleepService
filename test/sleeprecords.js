@@ -145,7 +145,7 @@ describe('/sleeprecs', function() {
     describe('GET \'/sleeprecs/:userid/:fromdate/:todate/:timezone\'', function() {
         var from = '2016-01-14';
         var to = '2016-01-17';
-        var timezone = 'America%2FLos_Angeles';
+        var timezone = 'America-Los_Angeles';
 
         var recarr = [
             /*
