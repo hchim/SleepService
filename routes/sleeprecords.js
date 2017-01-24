@@ -42,7 +42,6 @@ function toDateOfTimezone(datetime, timezone) {
 router.get("/:userid/:fromdate/:todate/:timezone", function(req, res, next) {
     var userId = req.params.userid;
     var timezone = req.params.timezone.replace('-', '/');
-
     var to = toDateOfTimezone(req.params.todate + " 23:59:59", timezone);
     var from = toDateOfTimezone(req.params.fromdate + " 00:00:00", timezone);
 
@@ -58,8 +57,8 @@ router.get("/:userid/:fromdate/:todate/:timezone", function(req, res, next) {
         for (var i = 0, len = records.length; i < len; i++) {
             var rec = records[i];
             //convert date time of the timezone
-            var tzFallAsleep = new TZDate(rec.fallAsleepTime, timezone);
-            var tzWakeup = new TZDate(rec.wakeupTime, timezone);
+            var tzFallAsleep = new TZDate(rec.fallAsleepTime, rec.timezone);
+            var tzWakeup = new TZDate(rec.wakeupTime, rec.timezone);
             var tzFallAsleepStr = tzFallAsleep.toString();
             var tzWakeupStr = tzWakeup.toString();
 
@@ -114,7 +113,7 @@ router.post("/", function(req, res, next) {
         if (err) return next(err);
         if (records.length > 0) {
             res.json({
-                "message": "The sleep record time overlap with existing records.",
+                "message": "The sleep record time overlaps with existing records.",
                 "errorCode": "TIME_OVERLAP",
             });
         } else {

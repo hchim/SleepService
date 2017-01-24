@@ -53,42 +53,38 @@ describe('/sleeprecs', function() {
             new SleepRecord({
                 "userId": '5879e8dc04459f4965f67059',
                 "fallAsleepTime": new Date('2016-01-15T06:20:05Z'),
-                "wakeupTime": new Date('2016-01-15T10:20:05Z')
+                "wakeupTime": new Date('2016-01-15T10:20:05Z'),
+                "timezone": 'America/Los_Angeles'
             }),
             new SleepRecord({
                 "userId": '5879e8dc04459f4965f67059',
                 "fallAsleepTime": new Date('2016-01-15T14:20:05Z'),
-                "wakeupTime": new Date('2016-01-15T16:20:05Z')
+                "wakeupTime": new Date('2016-01-15T16:20:05Z'),
+                "timezone": 'America/Los_Angeles'
             }),
             new SleepRecord({
                 "userId": '5879e8dc04459f4965f67059',
                 "fallAsleepTime": new Date('2016-01-15T20:20:05Z'),
-                "wakeupTime": new Date('2016-01-16T10:20:05Z')
+                "wakeupTime": new Date('2016-01-16T10:20:05Z'),
+                "timezone": 'America/Los_Angeles'
             }),
             new SleepRecord({
                 "userId": '5879e8dc04459f4965f67059',
                 "fallAsleepTime": new Date('2016-01-17T20:20:05Z'),
-                "wakeupTime": new Date('2016-01-17T23:20:05Z')
+                "wakeupTime": new Date('2016-01-17T23:20:05Z'),
+                "timezone": 'America/Los_Angeles'
             })
         ];
 
         before(function (done) {
-            SleepRecord.remove({});
-            recarr.forEach(function (item) {
-               item.save(function (err) {
-                   if (err) return done(err);
-               });
-            });
-            done();
-        });
-
-        after(function (done) {
-            recarr.forEach(function (item) {
-                item.remove(function (err) {
-                    if (err) return done(err);
+            SleepRecord.remove({}, function (err) {
+                recarr.forEach(function (item) {
+                    item.save(function (err) {
+                        if (err) return done(err);
+                    });
                 });
+                done();
             });
-            done();
         });
 
         it('should return sleep records.', function(done) {
