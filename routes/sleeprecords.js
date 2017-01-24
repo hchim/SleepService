@@ -104,10 +104,11 @@ router.get("/:userid/:fromdate/:todate/:timezone", function(req, res, next) {
 });
 
 /* Add sleep records. */
-router.post("/:userid", function(req, res, next) {
-    var userId = req.params.userid;
+router.post("/", function(req, res, next) {
+    var userId = req.body.userId;
     var from = new Date(req.body.fallAsleepTime);
     var to = new Date(req.body.wakeupTime);
+    var tz = req.body.timezone;
 
     SleepRecord.find({ userId: userId, wakeupTime: { $gt: from }, fallAsleepTime: { $lt: to } }, function (err, records) {
         if (err) return next(err);
@@ -121,16 +122,14 @@ router.post("/:userid", function(req, res, next) {
                 "userId": userId,
                 "fallAsleepTime": from,
                 "wakeupTime": to,
+                "timezone": tz
             });
 
             record.save(function (err, record) {
                 if (err) return next(err);
 
                 res.json({
-                    "_id": record._id,
-                    "userId": userId,
-                    "fallAsleepTime": from,
-                    "wakeupTime": to,
+                    "_id": record._id
                 });
             });
         }

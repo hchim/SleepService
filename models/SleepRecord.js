@@ -5,11 +5,12 @@ var sleepRecordSchema = mongoose.Schema({
     userId: String,
     fallAsleepTime: Date,
     wakeupTime: Date,
+    timezone: String
 });
 
 // indexes
 
-sleepRecordSchema.index({ userId: 1, fallAsleepTime: -1 });
+sleepRecordSchema.index({ userId: 1, fallAsleepTime: -1, wakeupTime: -1 });
 
 if (conf.get("env") === 'production') {
     sleepRecordSchema.set('autoIndex', false);
