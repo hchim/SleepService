@@ -2,10 +2,22 @@ var mongoose = require("mongoose");
 var conf = require("../config");
 
 var sleepRecordSchema = mongoose.Schema({
-    userId: String,
-    fallAsleepTime: Date,
-    wakeupTime: Date,
-    timezone: String
+    userId: {
+        type: String,
+        required: true
+    },
+    fallAsleepTime: {
+        type: Date,
+        required: true
+    },
+    wakeupTime: {
+        type: Date,
+        required: true
+    },
+    timezone: {
+        type: String,
+        required: true
+    }
 });
 
 // indexes
