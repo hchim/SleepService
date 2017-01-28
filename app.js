@@ -11,6 +11,7 @@ var conf = require("./config");
 var sleepRecords = require('./routes/sleeprecords');
 var babyInfos = require('./routes/babyinfo');
 var index = require('./routes/index');
+var metric = require('metricsclient')
 
 var app = express();
 
@@ -33,6 +34,14 @@ if (conf.get("env") === "production") {
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
+//api usage metric
+app.use(function (req, res, next) {
+    metric.increaseCounter('SleepService:Usage:' + req.method + ':' + req.url, function (err, jsonObj) {
+        if (err != null)
+            console.log(err)
+        next()
+    })
+})
 
 // setup routes
 app.use('/', index);
@@ -55,7 +64,8 @@ if (conf.get("env") === 'development') {
         res.status(err.status || 500);
         res.json({
             message: err.message,
-            error: err
+            error: err,
+            errorCode: 'INTERNAL_FAILURE'
         });
     });
 }
@@ -64,10 +74,17 @@ if (conf.get("env") === 'development') {
 // no stack traces leaked to user
 app.use(function(err, req, res, next) {
     res.status(err.status || 500);
-    console.error(err.message);
-    res.json({
-        message: err.message
-    });
+    metric.errorMetric('SleepService:Error:' + req.method + ':' + req.url, err, function (error, jsonObj) {
+        if (error != null)
+            return res.json({
+                message: 'Failed to add metric. \n' + err.message,
+                errorCode: 'INTERNAL_FAILURE'
+            });
+        res.json({
+            message: err.message,
+            errorCode: 'INTERNAL_FAILURE'
+        });
+    })
 });
 
 module.exports = app;
