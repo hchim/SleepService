@@ -2,11 +2,9 @@
     Timezone Date.
  */
 require("string-format-js");
-var moment = require('moment-timezone');
 
-function TZDate(date, timezone) {
-    var date_tz = moment.tz(date.toISOString(), timezone);
-    var datestr = date_tz.format();
+//constructor
+var TZDate = function(datestr) {
     // 2013-11-18T11:55:00-05:00
     var strs = datestr.split('T');
     var datetimeStrs = strs[0].split('-');

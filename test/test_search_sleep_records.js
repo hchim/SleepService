@@ -7,6 +7,7 @@ var conf = require("../config");
 var request = require('request');
 var expect = require('Chai').expect;
 var SleepRecord = require('../models/SleepRecord');
+var BabyInfo = require('../models/BabyInfo')
 
 var port = conf.get('server.port');
 var ip = conf.get("server.ip");
@@ -22,14 +23,26 @@ describe('/sleeprecs', function() {
             }
             console.log("Connected to mongodb: " + dbUrl);
             mongoose.set('debug', true);
-            done();
+            var baby = new BabyInfo({
+                userId: '5879e8dc04459f4965f67059',
+                name: 'babyname',
+                birthday: new Date(2015, 11, 22),
+                gender: 1
+            })
+
+            baby.save(function (err) {
+                if (err) done(err)
+                done()
+            })
         });
     });
 
     after(function(done) {
         SleepRecord.remove({}, function (err) {
             mongoose.disconnect();
-            done();
+            BabyInfo.remove({}, function (err) {
+                done()
+            })
         });
     });
 
@@ -90,7 +103,7 @@ describe('/sleeprecs', function() {
         it('should return sleep records.', function(done) {
             request.get({url: endpoint + recarr[0].userId + "/" + from + "/" + to + "/" + timezone}, function (err, res, body){
                 if (err) done(err);
-
+                console.log(body)
                 var json = JSON.parse(body);
                 var records = json.records;
 
