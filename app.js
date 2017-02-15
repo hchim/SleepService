@@ -10,6 +10,7 @@ var conf = require("./config");
 //routes
 var sleepRecords = require('./routes/sleeprecords');
 var babyInfos = require('./routes/babyinfo');
+var trainingPlan = require('./routes/trainingplan')
 var index = require('./routes/index');
 var metric = require('metricsclient')
 
@@ -47,6 +48,7 @@ app.use(function (req, res, next) {
 app.use('/', index);
 app.use('/sleeprecs', sleepRecords);
 app.use('/babyinfos', babyInfos);
+app.use('/plan', trainingPlan);
 
 //catch 404 and forward to error handler
 app.use(function(req, res, next) {
