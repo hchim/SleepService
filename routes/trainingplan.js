@@ -92,4 +92,17 @@ router.post("/:userid", function(req, res, next) {
     });
 });
 
+/**
+ * Reset sleep training plan. Set isActive to false.
+ */
+router.get("/:userid/reset", function(req, res, next) {
+    TrainingPlan.update({ 'userId': req.params.userid, isActive: true }, {isActive: false},
+        function (err) {
+        if (err) {
+            return next(err);
+        }
+        res.json({'Result': true});
+    });
+});
+
 module.exports = router;
