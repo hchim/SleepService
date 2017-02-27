@@ -36,6 +36,7 @@ describe('/plan', function() {
         var plan = new TrainingPlan({
             "startDate": new Date(),
             "userId": userId,
+            "isActive": true,
             "firstWeekTime":  {
                 sootheTime: 2,
                 firstCriedOut: 1,

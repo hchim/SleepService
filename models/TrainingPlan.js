@@ -6,6 +6,10 @@ var schema = mongoose.Schema({
         type: String,
         required: true
     },
+    isActive: {
+        type: Boolean,
+        default: true
+    },
     startDate: {
         type: Date,
         required: true

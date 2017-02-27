@@ -4,7 +4,7 @@ var TrainingPlan = require("../models/TrainingPlan");
 var commonUtils = require('servicecommonutils')
 
 router.get("/:userid", function(req, res, next) {
-    TrainingPlan.findOne({ 'userId': req.params.userid }, function (err, plan) {
+    TrainingPlan.findOne({ 'userId': req.params.userid, isActive: true }, function (err, plan) {
         if (err) {
             return next(err);
         }
