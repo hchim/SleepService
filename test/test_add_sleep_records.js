@@ -45,7 +45,7 @@ describe('/sleeprecs', function() {
                 expect(res.statusCode).to.equal(200);
                 SleepRecord.findOne({"_id": json._id}, function (err, rec) {
                     if (err) done(err);
-                    console.log(rec);
+
                     expect(rec.timezone).to.equal(formData.timezone);
                     expect(rec.userId).to.equal(formData.userId);
                     expect(new Date(formData.fallAsleepTime).getTime() - rec.fallAsleepTime.getTime()).to.equal(0);

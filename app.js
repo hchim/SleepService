@@ -13,6 +13,7 @@ var babyInfos = require('./routes/babyinfo');
 var trainingPlan = require('./routes/trainingplan')
 var index = require('./routes/index');
 var metric = require('metricsclient')
+var trainingRecords = require('./routes/trainingrecord')
 
 var app = express();
 
@@ -49,6 +50,7 @@ app.use('/', index);
 app.use('/sleeprecs', sleepRecords);
 app.use('/babyinfos', babyInfos);
 app.use('/plan', trainingPlan);
+app.use('/trainrecs', trainingRecords);
 
 //catch 404 and forward to error handler
 app.use(function(req, res, next) {
