@@ -52,19 +52,27 @@ function toTZDateFormat(date, timezone) {
  *   ]
  * }
  */
-router.get("/:userid/:fromdate/:todate/:timezone", function(req, res, next) {
-    var userId = req.params.userid;
+router.get("/:fromdate/:todate/:timezone", function(req, res, next) {
+    console.log(req.headers)
+    var id = req.headers['userId'];
+    if (!id) {
+        return res.json({
+            "message": "User id not found.",
+            "errorCode": "UNKNOWN_USER"
+        });
+    }
+
     var timezone = req.params.timezone.replace('-', '/');
     var to = toDateOfTimezone(req.params.todate + " 23:59:59", timezone);
     var from = toDateOfTimezone(req.params.fromdate + " 00:00:00", timezone);
 
-    SleepRecord.find({ userId: userId, wakeupTime: { $gte: from }, fallAsleepTime: { $lte: to } })
+    SleepRecord.find({ userId: id, wakeupTime: { $gte: from }, fallAsleepTime: { $lte: to } })
         .sort({fallAsleepTime: 1})
         .exec(function (err, records) {
         if (err) return next(err);
 
         var arr = processSleepRecords(records)
-        BabyInfo.findOne({userId: userId}, function (err, baby) {
+        BabyInfo.findOne({userId: id}, function (err, baby) {
             //if err or baby info not exist
             if (err || baby == null) {
                 return res.json({"records": arr});
@@ -150,12 +158,19 @@ function calculateSleepQuality(arr, birthday) {
 
 /* Add sleep records. */
 router.post("/", function(req, res, next) {
-    var userId = req.body.userId;
+    var id = req.headers['userId'];
+    if (!id) {
+        return res.json({
+            "message": "User id not found.",
+            "errorCode": "UNKNOWN_USER"
+        });
+    }
+
     var from = new Date(req.body.fallAsleepTime);
     var to = new Date(req.body.wakeupTime);
     var tz = req.body.timezone;
 
-    SleepRecord.find({ userId: userId, wakeupTime: { $gt: from }, fallAsleepTime: { $lt: to } }, function (err, records) {
+    SleepRecord.find({ userId: id, wakeupTime: { $gt: from }, fallAsleepTime: { $lt: to } }, function (err, records) {
         if (err) return next(err);
         if (records.length > 0) {
             res.json({
@@ -164,7 +179,7 @@ router.post("/", function(req, res, next) {
             });
         } else {
             var record = new SleepRecord({
-                "userId": userId,
+                "userId": id,
                 "fallAsleepTime": from,
                 "wakeupTime": to,
                 "timezone": tz

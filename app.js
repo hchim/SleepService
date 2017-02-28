@@ -6,13 +6,14 @@ var bodyParser = require('body-parser');
 var FileStreamRotator = require('file-stream-rotator');
 var fs = require('fs');
 var conf = require("./config");
+var middlewares = require('service-middlewares')(conf)
+var metric = require('metricsclient')
 
 //routes
 var sleepRecords = require('./routes/sleeprecords');
 var babyInfos = require('./routes/babyinfo');
 var trainingPlan = require('./routes/trainingplan')
 var index = require('./routes/index');
-var metric = require('metricsclient')
 var trainingRecords = require('./routes/trainingrecord')
 
 var app = express();
@@ -47,10 +48,10 @@ app.use(function (req, res, next) {
 
 // setup routes
 app.use('/', index);
-app.use('/sleeprecs', sleepRecords);
-app.use('/babyinfos', babyInfos);
-app.use('/plan', trainingPlan);
-app.use('/trainrecs', trainingRecords);
+app.use('/sleeprecs', middlewares.auth_middleware, sleepRecords);
+app.use('/babyinfos', middlewares.auth_middleware, babyInfos);
+app.use('/plan', middlewares.auth_middleware, trainingPlan);
+app.use('/trainrecs', middlewares.auth_middleware, trainingRecords);
 
 //catch 404 and forward to error handler
 app.use(function(req, res, next) {

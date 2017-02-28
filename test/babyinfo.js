@@ -7,10 +7,14 @@ var conf = require("../config");
 var request = require('request');
 var expect = require('Chai').expect;
 var BabyInfo = require('../models/BabyInfo');
+
 var port = conf.get('server.port');
 var ip = conf.get("server.ip");
 var dbUrl = conf.get('db.mongodb.url');
 var endpoint = 'http://' + ip + ':' + port + '/babyinfos/';
+
+var commonUtils = require('servicecommonutils')
+var redisClient = commonUtils.createRedisClient(conf.get('redis.host'), conf.get('redis.port'))
 
 describe('/babyinfos', function() {
 
@@ -42,6 +46,7 @@ describe('/babyinfos', function() {
             BabyInfo.remove({});
             baby.save(function (err) {
                 if (err) return done(err);
+                redisClient.set(baby.userId, baby.userId)
                 done();
             });
         });
@@ -54,7 +59,12 @@ describe('/babyinfos', function() {
         });
 
         it('should return baby info.', function(done) {
-            request.get({url: endpoint + baby.userId}, function (err, res, body){
+            request.get({
+                url: endpoint,
+                headers: {
+                    'x-auth-token': baby.userId
+                }
+            }, function (err, res, body){
                 if (err) done(err);
 
                 var json = JSON.parse(body);
@@ -66,7 +76,13 @@ describe('/babyinfos', function() {
 
         it('should return BABY_NOT_EXISTS error.', function(done) {
             var userId = '5879e900e97c9e497940abf6';
-            request.get({url: endpoint + userId}, function (err, res, body){
+            redisClient.set(userId, userId)
+            request.get({
+                url: endpoint,
+                headers: {
+                    'x-auth-token': userId
+                }
+            }, function (err, res, body){
                 if (err) done(err);
 
                 var json = JSON.parse(body);
@@ -77,7 +93,7 @@ describe('/babyinfos', function() {
         });
     });
 
-    describe('POST \'/babyinfos/:userid\'', function() {
+    describe('POST \'/babyinfos\'', function() {
 
         before(function(done) {
             BabyInfo.remove({});
@@ -96,7 +112,13 @@ describe('/babyinfos', function() {
                 birthday: baby.birthday,
                 gender: baby.gender
             };
-            request.post({url: endpoint + baby.userId, form: formData}, function (err, res, body){
+            redisClient.set(baby.userId, baby.userId)
+            request.post({
+                url: endpoint, form: formData,
+                headers: {
+                    'x-auth-token': baby.userId
+                }
+            }, function (err, res, body){
                 if (err) done(err);
 
                 var json = JSON.parse(body);
@@ -111,7 +133,7 @@ describe('/babyinfos', function() {
         });
     });
 
-    describe('POST \'/babyinfos/:userid\'', function() {
+    describe('POST \'/babyinfos\'', function() {
         var baby = new BabyInfo({
             "userId": '5879e6d090f623487fd35e8e',
             "name": 'Test',
@@ -123,6 +145,7 @@ describe('/babyinfos', function() {
             BabyInfo.remove({});
             baby.save(function (err) {
                 if (err) return done(err);
+                redisClient.set(baby.userId, baby.userId)
                 done();
             });
         });
@@ -140,7 +163,12 @@ describe('/babyinfos', function() {
                 birthday: baby.birthday,
                 gender: 0
             };
-            request.post({url: endpoint + baby.userId, form: formData}, function (err, res, body){
+            request.post({
+                url: endpoint, form: formData,
+                headers: {
+                    'x-auth-token': baby.userId
+                }
+            }, function (err, res, body){
                 if (err) done(err);
 
                 var json = JSON.parse(body);

@@ -7,12 +7,17 @@ var conf = require("../config");
 var request = require('request');
 var expect = require('Chai').expect;
 var TrainingPlan = require('../models/TrainingPlan');
+
 var port = conf.get('server.port');
 var ip = conf.get("server.ip");
 var dbUrl = conf.get('db.mongodb.url');
 var endpoint = 'http://' + ip + ':' + port + '/plan/';
 
+var commonUtils = require('servicecommonutils')
+var redisClient = commonUtils.createRedisClient(conf.get('redis.host'), conf.get('redis.port'))
+
 describe('/plan', function() {
+    var userId = '5879e8dc04459f4965f67059'
 
     before(function(done) {
         mongoose.connect(dbUrl, function (err) {
@@ -21,6 +26,8 @@ describe('/plan', function() {
             }
             console.log("Connected to mongodb: " + dbUrl);
             mongoose.set('debug', true);
+            redisClient.set(userId, userId)
+
             done();
         });
     });
@@ -30,7 +37,7 @@ describe('/plan', function() {
         done();
     });
 
-    describe('POST \'/plan/:userid\'', function() {
+    describe('POST \'/plan\'', function() {
 
         before(function(done) {
             TrainingPlan.remove({});
@@ -38,7 +45,6 @@ describe('/plan', function() {
         });
 
         it('should successfully add training plan.', function(done) {
-            var userId = '5879e8dc04459f4965f67059';
             var formData = {
                 "startDate": new Date(),
                 "firstWeekTime":  {
@@ -60,7 +66,12 @@ describe('/plan', function() {
                     followingCriedOut: 9,
                 }
             };
-            request.post({url: endpoint + userId, form: formData}, function (err, res, body){
+            request.post({
+                url: endpoint, form: formData,
+                headers: {
+                    'x-auth-token': userId
+                }
+            }, function (err, res, body){
                 if (err) done(err);
 
                 var json = JSON.parse(body);

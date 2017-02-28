@@ -3,8 +3,16 @@ var router = express.Router();
 var TrainingPlan = require("../models/TrainingPlan");
 var commonUtils = require('servicecommonutils')
 
-router.get("/:userid", function(req, res, next) {
-    TrainingPlan.findOne({ 'userId': req.params.userid, isActive: true }, function (err, plan) {
+router.get("/", function(req, res, next) {
+    var id = req.headers['userId'];
+    if (!id) {
+        return res.json({
+            "message": "User id not found.",
+            "errorCode": "UNKNOWN_USER"
+        });
+    }
+
+    TrainingPlan.findOne({ 'userId': id, isActive: true }, function (err, plan) {
         if (err) {
             return next(err);
         }
@@ -23,15 +31,23 @@ router.get("/:userid", function(req, res, next) {
 /*
 * Add or update sleep training plan.
 */
-router.post("/:userid", function(req, res, next) {
-    TrainingPlan.findOne({ 'userId': req.params.userid }, function (err, plan) {
+router.post("/", function(req, res, next) {
+    var id = req.headers['userId'];
+    if (!id) {
+        return res.json({
+            "message": "User id not found.",
+            "errorCode": "UNKNOWN_USER"
+        });
+    }
+
+    TrainingPlan.findOne({ 'userId': id }, function (err, plan) {
         if (err) {
             return next(err);
         }
 
         if (plan == null) {
             plan = new TrainingPlan({
-                "userId": req.params.userid,
+                "userId": id,
                 "startDate": new Date(req.body.startDate),
                 "firstWeekTime":  {
                     sootheTime: req.body['firstWeekTime[sootheTime]'],
@@ -95,8 +111,16 @@ router.post("/:userid", function(req, res, next) {
 /**
  * Reset sleep training plan. Set isActive to false.
  */
-router.get("/:userid/reset", function(req, res, next) {
-    TrainingPlan.update({ 'userId': req.params.userid, isActive: true }, {isActive: false},
+router.get("/reset", function(req, res, next) {
+    var id = req.headers['userId'];
+    if (!id) {
+        return res.json({
+            "message": "User id not found.",
+            "errorCode": "UNKNOWN_USER"
+        });
+    }
+
+    TrainingPlan.update({ 'userId': id, isActive: true }, {isActive: false},
         function (err) {
         if (err) {
             return next(err);

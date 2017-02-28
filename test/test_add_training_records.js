@@ -10,6 +10,9 @@ var ip = conf.get("server.ip");
 var dbUrl = conf.get('db.mongodb.url');
 var endpoint = 'http://' + ip + ':' + port + '/trainrecs/';
 
+var commonUtils = require('servicecommonutils')
+var redisClient = commonUtils.createRedisClient(conf.get('redis.host'), conf.get('redis.port'))
+
 describe('/trainrecs', function() {
 
     before(function(done) {
@@ -32,16 +35,25 @@ describe('/trainrecs', function() {
 
     describe('POST \'/trainrecs\'', function() {
         it('should successfully add sleep record.', function(done) {
+            var userId = '5879e900e97c9e497940abf6';
+            redisClient.set(userId, userId)
+
             var formData = {
                 'planId': '5879e8dc04459f4965f67059',
                 "elapsedTime": 65535000,
                 "criedOutTimes": 2,
                 "sootheTimes": 1
             };
-            request.post({url: endpoint, form: formData}, function (err, res, body){
+            request.post({
+                url: endpoint, form: formData,
+                headers: {
+                    'x-auth-token': userId
+                }
+            }, function (err, res, body){
                 if (err) done(err);
 
                 var json = JSON.parse(body);
+                console.log(body)
                 expect(res.statusCode).to.equal(200);
                 TrainingRecord.findOne({"_id": json._id}, function (err, rec) {
                     if (err) done(err);

@@ -8,11 +8,14 @@ var request = require('request');
 var expect = require('Chai').expect;
 var SleepRecord = require('../models/SleepRecord');
 var BabyInfo = require('../models/BabyInfo')
+var commonUtils = require('servicecommonutils')
 
 var port = conf.get('server.port');
 var ip = conf.get("server.ip");
 var dbUrl = conf.get('db.mongodb.url');
 var endpoint = 'http://' + ip + ':' + port + '/sleeprecs/';
+
+var redisClient = commonUtils.createRedisClient(conf.get('redis.host'), conf.get('redis.port'))
 
 describe('/sleeprecs', function() {
 
@@ -32,6 +35,8 @@ describe('/sleeprecs', function() {
 
             baby.save(function (err) {
                 if (err) done(err)
+                //set login session
+                redisClient.set(baby.userId, baby.userId)
                 done()
             })
         });
@@ -46,7 +51,7 @@ describe('/sleeprecs', function() {
         });
     });
 
-    describe('GET \'/sleeprecs/:userid/:fromdate/:todate/:timezone\'', function() {
+    describe('GET \'/sleeprecs/:fromdate/:todate/:timezone\'', function() {
         var from = '2016-01-14';
         var to = '2016-01-17';
         var timezone = 'America-Los_Angeles';
@@ -101,7 +106,12 @@ describe('/sleeprecs', function() {
         });
 
         it('should return sleep records.', function(done) {
-            request.get({url: endpoint + recarr[0].userId + "/" + from + "/" + to + "/" + timezone}, function (err, res, body){
+            request.get({
+                url: endpoint + from + "/" + to + "/" + timezone,
+                headers: {
+                    'x-auth-token': recarr[0].userId
+                }
+            }, function (err, res, body){
                 if (err) done(err);
                 console.log(body)
                 var json = JSON.parse(body);
