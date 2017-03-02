@@ -46,6 +46,11 @@ app.use(function (req, res, next) {
     })
 })
 
+//request signature checkup
+if (conf.get("env") !== 'test') {
+    app.use(middlewares.signature_middleware)
+}
+
 // setup routes
 app.use('/', index);
 app.use('/sleeprecs', middlewares.auth_middleware, sleepRecords);
