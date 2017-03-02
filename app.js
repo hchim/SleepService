@@ -47,13 +47,13 @@ app.use(function (req, res, next) {
     })
 })
 
+app.use('/', index)
 //request signature checkup
 if (conf.get("env") !== 'test') {
     app.use(middlewares.signature_middleware)
 }
 
 // setup routes
-app.use('/', index);
 app.use('/sleeprecs', middlewares.auth_middleware, sleepRecords);
 app.use('/babyinfos', middlewares.auth_middleware, babyInfos);
 app.use('/plan', middlewares.auth_middleware, trainingPlan);
