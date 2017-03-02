@@ -6,6 +6,7 @@ var moment = require('moment-timezone');
 var TZDate = require('../utils/TZDate');
 var sqmodel = require('../utils/SleepQualityModel')
 var clone = require('clone');
+var utils = require('servicecommonutils')
 
 /*
  * datetime: yyyy-MM-dd hh:mm:ss
@@ -53,13 +54,12 @@ function toTZDateFormat(date, timezone) {
  * }
  */
 router.get("/:fromdate/:todate/:timezone", function(req, res, next) {
-    console.log(req.headers)
     var id = req.headers['userId'];
     if (!id) {
-        return res.json({
+        return res.json(utils.encodeResponseBody(req, {
             "message": "User id not found.",
             "errorCode": "UNKNOWN_USER"
-        });
+        }));
     }
 
     var timezone = req.params.timezone.replace('-', '/');
@@ -81,7 +81,7 @@ router.get("/:fromdate/:todate/:timezone", function(req, res, next) {
             //calculate sleep quality
             var birthday = new Date(baby.birthday)
             calculateSleepQuality(arr, birthday)
-            res.json({"records": arr});
+            res.json(utils.encodeResponseBody(req, {"records": arr}));
         })
     });
 });
@@ -160,10 +160,10 @@ function calculateSleepQuality(arr, birthday) {
 router.post("/", function(req, res, next) {
     var id = req.headers['userId'];
     if (!id) {
-        return res.json({
+        return res.json(utils.encodeResponseBody(req, {
             "message": "User id not found.",
             "errorCode": "UNKNOWN_USER"
-        });
+        }));
     }
 
     var from = new Date(req.body.fallAsleepTime);
@@ -173,10 +173,10 @@ router.post("/", function(req, res, next) {
     SleepRecord.find({ userId: id, wakeupTime: { $gt: from }, fallAsleepTime: { $lt: to } }, function (err, records) {
         if (err) return next(err);
         if (records.length > 0) {
-            res.json({
+            res.json(utils.encodeResponseBody(req, {
                 "message": "The sleep record time overlaps with existing records.",
                 "errorCode": "TIME_OVERLAP",
-            });
+            }));
         } else {
             var record = new SleepRecord({
                 "userId": id,
@@ -188,9 +188,9 @@ router.post("/", function(req, res, next) {
             record.save(function (err, record) {
                 if (err) return next(err);
 
-                res.json({
+                res.json(utils.encodeResponseBody(req, {
                     "_id": record._id
-                });
+                }));
             });
         }
     });

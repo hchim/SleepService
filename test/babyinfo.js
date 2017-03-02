@@ -62,7 +62,8 @@ describe('/babyinfos', function() {
             request.get({
                 url: endpoint,
                 headers: {
-                    'x-auth-token': baby.userId
+                    'x-auth-token': baby.userId,
+                    'is-internal-request': 'YES'
                 }
             }, function (err, res, body){
                 if (err) done(err);
@@ -80,7 +81,8 @@ describe('/babyinfos', function() {
             request.get({
                 url: endpoint,
                 headers: {
-                    'x-auth-token': userId
+                    'x-auth-token': userId,
+                    'is-internal-request': 'YES'
                 }
             }, function (err, res, body){
                 if (err) done(err);
@@ -116,7 +118,8 @@ describe('/babyinfos', function() {
             request.post({
                 url: endpoint, form: formData,
                 headers: {
-                    'x-auth-token': baby.userId
+                    'x-auth-token': baby.userId,
+                    'is-internal-request': 'YES'
                 }
             }, function (err, res, body){
                 if (err) done(err);
@@ -166,7 +169,8 @@ describe('/babyinfos', function() {
             request.post({
                 url: endpoint, form: formData,
                 headers: {
-                    'x-auth-token': baby.userId
+                    'x-auth-token': baby.userId,
+                    'is-internal-request': 'YES'
                 }
             }, function (err, res, body){
                 if (err) done(err);

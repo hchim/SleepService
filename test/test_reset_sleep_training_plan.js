@@ -73,7 +73,8 @@ describe('/plan', function() {
             request.get({
                 url: endpoint + 'reset',
                 headers: {
-                    'x-auth-token': userId
+                    'x-auth-token': userId,
+                    'is-internal-request': 'YES'
                 }
             }, function (err, res, body){
                 if (err) done(err);

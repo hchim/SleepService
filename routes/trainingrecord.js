@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var TrainingRecord = require("../models/TrainingRecord");
+var utils = require('servicecommonutils')
 
 router.post("/", function(req, res, next) {
     //TODO check plan id belongs to user
@@ -13,7 +14,7 @@ router.post("/", function(req, res, next) {
 
     record.save(function (err, record) {
         if (err) return next(err);
-        res.json({'_id': record._id});
+        res.json(utils.encodeResponseBody(req, {'_id': record._id}));
     });
 });
 

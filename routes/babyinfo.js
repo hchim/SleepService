@@ -1,14 +1,15 @@
 var express = require('express');
 var router = express.Router();
 var BabyInfo = require("../models/BabyInfo");
+var utils = require('servicecommonutils')
 
 router.get("/", function(req, res, next) {
     var id = req.headers['userId'];
     if (!id) {
-        return res.json({
+        return res.json(utils.encodeResponseBody(req, {
             "message": "User id not found.",
             "errorCode": "UNKNOWN_USER"
-        });
+        }));
     }
 
     BabyInfo.findOne({ 'userId': id }, function (err, baby) {
@@ -17,16 +18,16 @@ router.get("/", function(req, res, next) {
         }
 
         if (baby == null) {
-            return res.json({
+            return res.json(utils.encodeResponseBody(req, {
                 message: "Failed to find the baby information with this account.",
                 errorCode: "BABY_NOT_EXISTS",
-            });
+            }));
         } else {
-            return res.json({
+            return res.json(utils.encodeResponseBody(req, {
                 name: baby.name,
                 birthday: baby.birthday,
                 gender: baby.gender,
-            });
+            }));
         }
     });
 });
@@ -38,10 +39,10 @@ router.get("/", function(req, res, next) {
 router.post("/", function(req, res, next) {
     var id = req.headers['userId'];
     if (!id) {
-        return res.json({
+        return res.json(utils.encodeResponseBody(req, {
             "message": "User id not found.",
             "errorCode": "UNKNOWN_USER"
-        });
+        }));
     }
 
     BabyInfo.findOne({ 'userId': id }, function (err, baby) {
@@ -62,11 +63,11 @@ router.post("/", function(req, res, next) {
                     return next(err);
                 }
 
-                res.json({
+                res.json(utils.encodeResponseBody(req, {
                     name: baby.name,
                     birthday: baby.birthday,
                     gender: baby.gender,
-                });
+                }));
             });
         } else {
             baby.name = req.body.name;
@@ -76,11 +77,11 @@ router.post("/", function(req, res, next) {
             baby.save(function (err, baby) {
                 if (err) return next(err);
 
-                res.json({
+                res.json(utils.encodeResponseBody(req, {
                     name: baby.name,
                     birthday: baby.birthday,
                     gender: baby.gender,
-                });
+                }));
             });
         }
     });

@@ -1,15 +1,15 @@
 var express = require('express');
 var router = express.Router();
 var TrainingPlan = require("../models/TrainingPlan");
-var commonUtils = require('servicecommonutils')
+var utils = require('servicecommonutils')
 
 router.get("/", function(req, res, next) {
     var id = req.headers['userId'];
     if (!id) {
-        return res.json({
+        return res.json(utils.encodeResponseBody(req, {
             "message": "User id not found.",
             "errorCode": "UNKNOWN_USER"
-        });
+        }));
     }
 
     TrainingPlan.findOne({ 'userId': id, isActive: true }, function (err, plan) {
@@ -18,12 +18,12 @@ router.get("/", function(req, res, next) {
         }
 
         if (plan == null) {
-            res.json({
+            res.json(utils.encodeResponseBody(req, {
                 message: "Failed to find the sleep training plan with this account.",
                 errorCode: "SLEEP_TRAINING_PLAN_NOT_EXISTS",
-            });
+            }));
         } else {
-            res.json(plan);
+            res.json(utils.encodeResponseBody(req, plan));
         }
     });
 });
@@ -34,10 +34,10 @@ router.get("/", function(req, res, next) {
 router.post("/", function(req, res, next) {
     var id = req.headers['userId'];
     if (!id) {
-        return res.json({
+        return res.json(utils.encodeResponseBody(req, {
             "message": "User id not found.",
             "errorCode": "UNKNOWN_USER"
-        });
+        }));
     }
 
     TrainingPlan.findOne({ 'userId': id }, function (err, plan) {
@@ -73,36 +73,36 @@ router.post("/", function(req, res, next) {
                 if (err) {
                     return next(err);
                 }
-                res.json({
+                res.json(utils.encodeResponseBody(req, {
                     _id: plan._id
-                });
+                }));
             });
         } else {
             plan.startDate = req.body.startDate;
             plan.firstWeekTime =  {
-                sootheTime: commonUtils.nestedReqField(req.body, 'firstWeekTime', 'sootheTime'),
-                firstCriedOut: commonUtils.nestedReqField(req.body, 'firstWeekTime', 'firstCriedOut'),
-                secondCriedOut: commonUtils.nestedReqField(req.body, 'firstWeekTime', 'secondCriedOut'),
-                followingCriedOut: commonUtils.nestedReqField(req.body, 'firstWeekTime', 'followingCriedOut'),
+                sootheTime: utils.nestedReqField(req.body, 'firstWeekTime', 'sootheTime'),
+                firstCriedOut: utils.nestedReqField(req.body, 'firstWeekTime', 'firstCriedOut'),
+                secondCriedOut: utils.nestedReqField(req.body, 'firstWeekTime', 'secondCriedOut'),
+                followingCriedOut: utils.nestedReqField(req.body, 'firstWeekTime', 'followingCriedOut'),
             };
             plan.secondWeekTime = {
-                sootheTime: commonUtils.nestedReqField(req.body, 'secondWeekTime', 'sootheTime'),
-                firstCriedOut: commonUtils.nestedReqField(req.body, 'secondWeekTime', 'firstCriedOut'),
-                secondCriedOut: commonUtils.nestedReqField(req.body, 'secondWeekTime', 'secondCriedOut'),
-                followingCriedOut: commonUtils.nestedReqField(req.body, 'secondWeekTime', 'followingCriedOut'),
+                sootheTime: utils.nestedReqField(req.body, 'secondWeekTime', 'sootheTime'),
+                firstCriedOut: utils.nestedReqField(req.body, 'secondWeekTime', 'firstCriedOut'),
+                secondCriedOut: utils.nestedReqField(req.body, 'secondWeekTime', 'secondCriedOut'),
+                followingCriedOut: utils.nestedReqField(req.body, 'secondWeekTime', 'followingCriedOut'),
             };
             plan.followingWeekTime = {
-                sootheTime: commonUtils.nestedReqField(req.body, 'followingWeekTime', 'sootheTime'),
-                firstCriedOut: commonUtils.nestedReqField(req.body, 'followingWeekTime', 'firstCriedOut'),
-                secondCriedOut: commonUtils.nestedReqField(req.body, 'followingWeekTime', 'secondCriedOut'),
-                followingCriedOut: commonUtils.nestedReqField(req.body, 'followingWeekTime', 'followingCriedOut'),
+                sootheTime: utils.nestedReqField(req.body, 'followingWeekTime', 'sootheTime'),
+                firstCriedOut: utils.nestedReqField(req.body, 'followingWeekTime', 'firstCriedOut'),
+                secondCriedOut: utils.nestedReqField(req.body, 'followingWeekTime', 'secondCriedOut'),
+                followingCriedOut: utils.nestedReqField(req.body, 'followingWeekTime', 'followingCriedOut'),
             };
 
             plan.save(function (err, plan) {
                 if (err) return next(err);
-                res.json({
+                res.json(utils.encodeResponseBody(req, {
                     _id: plan._id
-                });
+                }));
             });
         }
     });
@@ -114,10 +114,10 @@ router.post("/", function(req, res, next) {
 router.get("/reset", function(req, res, next) {
     var id = req.headers['userId'];
     if (!id) {
-        return res.json({
+        return res.json(utils.encodeResponseBody(req, {
             "message": "User id not found.",
             "errorCode": "UNKNOWN_USER"
-        });
+        }));
     }
 
     TrainingPlan.update({ 'userId': id, isActive: true }, {isActive: false},
@@ -125,7 +125,7 @@ router.get("/reset", function(req, res, next) {
         if (err) {
             return next(err);
         }
-        res.json({'Result': true});
+        res.json(utils.encodeResponseBody(req, {'Result': true}));
     });
 });
 

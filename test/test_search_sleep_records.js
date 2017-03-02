@@ -109,7 +109,8 @@ describe('/sleeprecs', function() {
             request.get({
                 url: endpoint + from + "/" + to + "/" + timezone,
                 headers: {
-                    'x-auth-token': recarr[0].userId
+                    'x-auth-token': recarr[0].userId,
+                    'is-internal-request': 'YES'
                 }
             }, function (err, res, body){
                 if (err) done(err);

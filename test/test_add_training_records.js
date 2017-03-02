@@ -47,7 +47,8 @@ describe('/trainrecs', function() {
             request.post({
                 url: endpoint, form: formData,
                 headers: {
-                    'x-auth-token': userId
+                    'x-auth-token': userId,
+                    'is-internal-request': 'YES'
                 }
             }, function (err, res, body){
                 if (err) done(err);
