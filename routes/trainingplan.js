@@ -73,7 +73,7 @@ router.post("/", function(req, res, next) {
                 if (err) {
                     return next(err);
                 }
-                res.json(utils.encodeResponseBody(req, {
+                return res.json(utils.encodeResponseBody(req, {
                     _id: plan._id
                 }));
             });
@@ -100,7 +100,7 @@ router.post("/", function(req, res, next) {
 
             plan.save(function (err, plan) {
                 if (err) return next(err);
-                res.json(utils.encodeResponseBody(req, {
+                return res.json(utils.encodeResponseBody(req, {
                     _id: plan._id
                 }));
             });
@@ -120,12 +120,11 @@ router.get("/reset", function(req, res, next) {
         }));
     }
 
-    TrainingPlan.update({ 'userId': id, isActive: true }, {isActive: false},
-        function (err) {
+    TrainingPlan.update({ 'userId': id, isActive: true }, {isActive: false}, function (err) {
         if (err) {
             return next(err);
         }
-        res.json(utils.encodeResponseBody(req, {'Result': true}));
+        return res.json(utils.encodeResponseBody(req, {'Result': true}));
     });
 });
 

@@ -2,8 +2,16 @@ var mongoose = require("mongoose");
 var conf = require("../config");
 
 var babyInfoSchema = mongoose.Schema({
-    userId: String,
-    name: String,
+    userId: {
+        type: String,
+        required: true
+    },
+    name: {
+        type: String,
+        required: true,
+        minlength: 3,
+        maxlength: 30
+    },
     birthday: String,
     gender: Number,
 });

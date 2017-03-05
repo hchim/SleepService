@@ -4,6 +4,7 @@ var conf = require("../config");
 var request = require('request');
 var expect = require('Chai').expect;
 var TrainingRecord = require('../models/TrainingRecord');
+var TrainingPlan = require('../models/TrainingPlan')
 
 var port = conf.get('server.port');
 var ip = conf.get("server.ip");
@@ -23,7 +24,9 @@ describe('/trainrecs', function() {
             console.log("Connected to mongodb: " + dbUrl);
             mongoose.set('debug', true);
             TrainingRecord.remove({}, function (err) {
-                done();
+                TrainingPlan.remove({}, function (err) {
+                    done()
+                })
             });
         });
     });
@@ -34,20 +37,51 @@ describe('/trainrecs', function() {
     });
 
     describe('POST \'/trainrecs\'', function() {
-        it('should successfully add sleep record.', function(done) {
-            var userId = '5879e900e97c9e497940abf6';
-            redisClient.set(userId, userId)
+        var plan = new TrainingPlan({
+            userId : '5879e8dc04459f4965f67059',
+            "startDate": new Date(),
+            "isActive": true,
+            "firstWeekTime":  {
+                sootheTime: 2,
+                firstCriedOut: 1,
+                secondCriedOut: 3,
+                followingCriedOut: 5,
+            },
+            "secondWeekTime": {
+                sootheTime: 2,
+                firstCriedOut: 2,
+                secondCriedOut: 4,
+                followingCriedOut: 6,
+            },
+            "followingWeekTime": {
+                sootheTime: 2,
+                firstCriedOut: 3,
+                secondCriedOut: 6,
+                followingCriedOut: 9,
+            }
+        });
 
+        before(function(done) {
+            plan.save(function (err, plan) {
+                if (err) return done(err)
+                console.log(plan._id)
+                done()
+            })
+        })
+
+        it('should successfully add sleep record.', function(done) {
+            redisClient.set('userId', plan.userId)
             var formData = {
-                'planId': '5879e8dc04459f4965f67059',
+                'planId': plan._id.toString(),
                 "elapsedTime": 65535000,
                 "criedOutTimes": 2,
                 "sootheTimes": 1
             };
+
             request.post({
                 url: endpoint, form: formData,
                 headers: {
-                    'x-auth-token': userId,
+                    'x-auth-token': plan.userId,
                     'is-internal-request': 'YES'
                 }
             }, function (err, res, body){

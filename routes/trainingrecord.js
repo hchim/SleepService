@@ -1,20 +1,45 @@
 var express = require('express');
 var router = express.Router();
 var TrainingRecord = require("../models/TrainingRecord");
+var TrainingPlan = require('../models/TrainingPlan')
 var utils = require('servicecommonutils')
+var ObjectId = require('mongoose').Types.ObjectId;
 
+/**
+ * Add a sleep record.
+ */
 router.post("/", function(req, res, next) {
-    //TODO check plan id belongs to user
-    var record = new TrainingRecord({
-        planId: req.body.planId,
-        elapsedTime: req.body.elapsedTime,
-        sootheTimes: req.body.sootheTimes,
-        criedOutTimes: req.body.criedOutTimes
-    });
+    var id = req.headers['userId'];
+    if (!id) {
+        return res.json(utils.encodeResponseBody(req, {
+            "message": "User id not found.",
+            "errorCode": "UNKNOWN_USER"
+        }));
+    }
 
-    record.save(function (err, record) {
-        if (err) return next(err);
-        res.json(utils.encodeResponseBody(req, {'_id': record._id}));
+    TrainingPlan.findOne({ '_id': req.body.planId, isActive: true}, function (err, plan) {
+        if (err) {
+            return next(err);
+        }
+
+        if (plan == null) {
+            res.json(utils.encodeResponseBody(req, {
+                message: "Failed to find the sleep training plan with this account.",
+                errorCode: "SLEEP_TRAINING_PLAN_NOT_EXISTS",
+            }));
+        } else {
+            var record = new TrainingRecord({
+                planId: req.body.planId,
+                elapsedTime: req.body.elapsedTime,
+                sootheTimes: req.body.sootheTimes,
+                criedOutTimes: req.body.criedOutTimes
+            });
+
+            record.save(function (err, record) {
+                if (err) return next(err);
+                return res.json(utils.encodeResponseBody(req, {'_id': record._id}));
+            });
+        }
     });
 });
 

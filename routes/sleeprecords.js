@@ -188,7 +188,7 @@ router.post("/", function(req, res, next) {
             record.save(function (err, record) {
                 if (err) return next(err);
 
-                res.json(utils.encodeResponseBody(req, {
+                return res.json(utils.encodeResponseBody(req, {
                     "_id": record._id
                 }));
             });

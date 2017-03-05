@@ -39,13 +39,15 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 //api usage metric
-app.use(function (req, res, next) {
-    metric.increaseCounter('SleepService:Usage:' + req.method + ':' + req.url, function (err, jsonObj) {
-        if (err != null)
-            console.log(err)
-        next()
+if (conf.get("env") !== 'test') {
+    app.use(function (req, res, next) {
+        metric.increaseCounter('SleepService:Usage:' + req.method + ':' + req.url, function (err, jsonObj) {
+            if (err != null)
+                console.log(err)
+            next()
+        })
     })
-})
+}
 
 app.use('/', index)
 //request signature checkup

@@ -3,6 +3,9 @@ var router = express.Router();
 var BabyInfo = require("../models/BabyInfo");
 var utils = require('servicecommonutils')
 
+/**
+ * Get the baby info of the user.
+ */
 router.get("/", function(req, res, next) {
     var id = req.headers['userId'];
     if (!id) {
@@ -63,7 +66,7 @@ router.post("/", function(req, res, next) {
                     return next(err);
                 }
 
-                res.json(utils.encodeResponseBody(req, {
+                return res.json(utils.encodeResponseBody(req, {
                     name: baby.name,
                     birthday: baby.birthday,
                     gender: baby.gender,
@@ -77,7 +80,7 @@ router.post("/", function(req, res, next) {
             baby.save(function (err, baby) {
                 if (err) return next(err);
 
-                res.json(utils.encodeResponseBody(req, {
+                return res.json(utils.encodeResponseBody(req, {
                     name: baby.name,
                     birthday: baby.birthday,
                     gender: baby.gender,
