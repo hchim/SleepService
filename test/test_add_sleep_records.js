@@ -7,7 +7,7 @@ var SleepRecord = require('../models/SleepRecord');
 
 var port = conf.get('server.port');
 var ip = conf.get("server.ip");
-var dbUrl = conf.get('db.mongodb.url');
+var dbUrl = conf.get('mongodb.url');
 var endpoint = 'http://' + ip + ':' + port + '/sleeprecs/';
 
 var commonUtils = require('servicecommonutils')
