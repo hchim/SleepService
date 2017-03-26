@@ -2,6 +2,9 @@
   "server": {
     "port": 3110
   },
+  "endpoint": {
+    "metricservice": "http://localhost:3112"
+  },
   "mongodb": {
     "url": "mongodb://localhost/sleepdb-test"
   }
