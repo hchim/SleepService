@@ -3,8 +3,8 @@ var mongoose = require('mongoose');
 var conf = require("../config");
 var request = require('request');
 var expect = require('Chai').expect;
-var TrainingRecord = require('../models/TrainingRecord');
-var TrainingPlan = require('../models/TrainingPlan')
+var TrainingRecord = require("sleepservicemodels").TrainingRecord(mongoose.connection);
+var TrainingPlan = require("sleepservicemodels").TrainingPlan(mongoose.connection);
 
 var port = conf.get('server.port');
 var ip = conf.get("server.ip");

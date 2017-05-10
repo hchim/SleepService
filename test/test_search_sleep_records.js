@@ -6,8 +6,8 @@ var mongoose = require('mongoose');
 var conf = require("../config");
 var request = require('request');
 var expect = require('Chai').expect;
-var SleepRecord = require('../models/SleepRecord');
-var BabyInfo = require('../models/BabyInfo')
+var SleepRecord = require("sleepservicemodels").SleepRecord(mongoose.connection);
+var BabyInfo = require("sleepservicemodels").BabyInfo(mongoose.connection);
 var commonUtils = require('servicecommonutils')
 
 var port = conf.get('server.port');

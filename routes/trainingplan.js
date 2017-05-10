@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
-var TrainingPlan = require("../models/TrainingPlan");
+var mongoose = require('mongoose')
+var TrainingPlan = require("sleepservicemodels").TrainingPlan(mongoose.connection);
 var utils = require('servicecommonutils')
 
 router.get("/", function(req, res, next) {

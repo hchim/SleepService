@@ -1,7 +1,8 @@
 var express = require('express');
 var router = express.Router();
-var TrainingRecord = require("../models/TrainingRecord");
-var TrainingPlan = require('../models/TrainingPlan')
+var mongoose = require('mongoose')
+var TrainingRecord = require("sleepservicemodels").TrainingRecord(mongoose.connection);
+var TrainingPlan = require("sleepservicemodels").TrainingPlan(mongoose.connection);
 var utils = require('servicecommonutils')
 var ObjectId = require('mongoose').Types.ObjectId;
 

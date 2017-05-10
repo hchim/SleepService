@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
-var BabyInfo = require("../models/BabyInfo");
+var mongoose = require('mongoose')
+var BabyInfo = require("sleepservicemodels").BabyInfo(mongoose.connection);
 var utils = require('servicecommonutils')
 
 /**

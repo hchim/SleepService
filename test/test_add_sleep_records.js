@@ -3,7 +3,7 @@ var mongoose = require('mongoose');
 var conf = require("../config");
 var request = require('request');
 var expect = require('Chai').expect;
-var SleepRecord = require('../models/SleepRecord');
+var SleepRecord = require("sleepservicemodels").SleepRecord(mongoose.connection);
 
 var port = conf.get('server.port');
 var ip = conf.get("server.ip");
