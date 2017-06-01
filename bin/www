@@ -18,6 +18,8 @@ var port = conf.get('server.port');
 var ip = conf.get("server.ip");
 var dbUrl = conf.get('mongodb.url');
 var env = conf.get('env');
+var utils = require('servicecommonutils')
+var winston = utils.getWinston(env)
 
 app.set('port', port);
 
@@ -37,26 +39,26 @@ server.on('listening', onListening);
 
 // Mongoose listeners
 mongoose.connection.on('disconnected', function(){
-  console.log('Lost MongoDB connection... : ' + dbUrl);
+  winston.info('Lost MongoDB connection... : ' + dbUrl);
   //Reconnect every 5 seconds.
   setTimeout(connect_db, 5000);
 });
 
 mongoose.connection.on('connected', function() {
-  console.log('Connection established to : ' + dbUrl);
+    winston.info('Connection established to : ' + dbUrl);
 });
 
 mongoose.connection.once('open', function() {
-  console.log('Connection open');
+    winston.info('Connection open');
 });
 
 mongoose.connection.on('error', function() {
-  console.log('Could not connect to : ' + dbUrl);
+    winston.info('Could not connect to : ' + dbUrl);
   mongoose.disconnect();
 });
 
 mongoose.connection.on('reconnected', function() {
-  console.log('Reconnected to : ' + dbUrl);
+    winston.info('Reconnected to : ' + dbUrl);
 });
 
 /**
@@ -75,11 +77,11 @@ function onError(error) {
   // handle specific listen errors with friendly messages
   switch (error.code) {
     case 'EACCES':
-      console.error(bind + ' requires elevated privileges');
+      winston.error(bind + ' requires elevated privileges');
       process.exit(1);
       break;
     case 'EADDRINUSE':
-      console.error(bind + ' is already in use');
+      winston.error(bind + ' is already in use');
       process.exit(1);
       break;
     default:
@@ -93,7 +95,7 @@ function onError(error) {
 
 function onListening() {
   var addr = server.address();
-  console.log('Running on http://' + addr.address + ":" + addr.port);
+    winston.info('Running on http://' + addr.address + ":" + addr.port);
   // connect to database
   connect_db();
 }
@@ -111,11 +113,11 @@ function connect_db() {
 
   mongoose.connect(dbUrl, options, function (error) {
     if(error) {
-      console.error(error);
+      winston.error(error.message, error);
       return;
     }
 
-    debug("Connected to mongodb.");
+    winston.info("Connected to mongodb.");
     if (env === 'development' || env === 'test') {
       mongoose.set('debug', true);
     }

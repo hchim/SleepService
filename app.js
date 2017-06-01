@@ -8,6 +8,7 @@ var conf = require("./config");
 var middlewares = require('service-middlewares')(conf)
 var metric = require('metricsclient')(conf)
 var utils = require('servicecommonutils')
+var winston = utils.getWinston(conf.get('env'))
 
 //routes
 var sleepRecords = require('./routes/sleeprecords');
@@ -42,7 +43,7 @@ if (conf.get("env") !== 'test') {
     app.use(function (req, res, next) {
         metric.increaseCounter('SleepService:Usage:' + req.method + ':' + req.url, function (err, jsonObj) {
             if (err != null)
-                console.log(err)
+                winston.error(error.message, err)
             next()
         })
     })
