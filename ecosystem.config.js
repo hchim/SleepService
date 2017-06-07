@@ -14,7 +14,7 @@ module.exports = {
               NODE_ENV: "development"
           },
           watch: false,
-          instances: 2,
+          instances: 1,
           exec_mode: "cluster",
           log_date_format: "YYYY-MM-DD HH:mm Z",
           error_file: "./log/errors.log",
