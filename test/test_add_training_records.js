@@ -92,7 +92,7 @@ describe('/trainrecs', function() {
                 expect(res.statusCode).to.equal(200);
                 TrainingRecord.findOne({"_id": json._id}, function (err, rec) {
                     if (err) done(err);
-
+                    console.log(rec)
                     expect(rec.planId).to.equal(formData.planId);
                     expect(rec.elapsedTime).to.equal(formData.elapsedTime);
                     expect(rec.criedOutTimes).to.equal(formData.criedOutTimes);

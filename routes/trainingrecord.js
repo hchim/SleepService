@@ -4,7 +4,6 @@ var mongoose = require('mongoose')
 var TrainingRecord = require("sleepservicemodels").TrainingRecord(mongoose.connection);
 var TrainingPlan = require("sleepservicemodels").TrainingPlan(mongoose.connection);
 var utils = require('servicecommonutils')
-var ObjectId = require('mongoose').Types.ObjectId;
 
 /**
  * Add a sleep record.

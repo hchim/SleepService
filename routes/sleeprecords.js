@@ -117,6 +117,9 @@ function processSleepRecords(records) {
             newFallAsleep.minute = 59;
             newFallAsleep.second = 59;
             val.times.push({
+                "_id": rec._id,
+                "recSleepTime": tzFallAsleep.toString(),
+                "recWakeupTime": tzWakeup.toString(),
                 "fallAsleepTime": tzFallAsleep.toString(),
                 "wakeupTime": newFallAsleep.toString(),
             });
@@ -129,11 +132,17 @@ function processSleepRecords(records) {
             newWakeup.minute = 0;
             newWakeup.second = 0;
             val.times.push({
+                "_id": rec._id,
+                "recSleepTime": tzFallAsleep.toString(),
+                "recWakeupTime": tzWakeup.toString(),
                 "fallAsleepTime": newWakeup.toString(),
                 "wakeupTime": tzWakeup.toString(),
             });
         } else {
             val.times.push({
+                "_id": rec._id,
+                "recSleepTime": tzFallAsleep.toString(),
+                "recWakeupTime": tzWakeup.toString(),
                 "fallAsleepTime": tzFallAsleep.toString(),
                 "wakeupTime": tzWakeup.toString(),
             });
@@ -194,6 +203,24 @@ router.post("/", function(req, res, next) {
                 }));
             });
         }
+    });
+});
+
+router.delete("/:id", function(req, res, next) {
+    var id = req.headers['userId'];
+    if (!id) {
+        return res.json(utils.encodeResponseBody(req, {
+            "message": "User id not found.",
+            "errorCode": "UNKNOWN_USER"
+        }));
+    }
+
+    SleepRecord.remove({ userId: id, _id: req.params.id }, function (err) {
+        if (err) return next(err);
+
+        return res.json(utils.encodeResponseBody(req, {
+            result: true
+        }));
     });
 });
 

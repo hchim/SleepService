@@ -19,6 +19,7 @@
     "moment-timezone": "*",
     "string-format-js": "*",
     "clone": "*",
+    "async": "^2.4.1",
     "metricsclient": "git@github.com:hchim/MetricServiceClient.git",
     "servicecommonutils": "git@github.com:hchim/ServiceCommonUtils.git",
     "service-middlewares": "git@github.com:hchim/ServiceMiddlewares.git",
