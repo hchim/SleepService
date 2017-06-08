@@ -43,8 +43,8 @@ if (conf.get("env") !== 'test') {
     app.use(function (req, res, next) {
         metric.increaseCounter('SleepService:Usage:' + req.method + ':' + req.url, function (err, jsonObj) {
             if (err != null)
-                winston.error(error.message, err)
-            next()
+                winston.error(err.message, err)
+            next(err)
         })
     })
 }
