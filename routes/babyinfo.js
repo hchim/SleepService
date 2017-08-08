@@ -3,11 +3,17 @@ var router = express.Router();
 var mongoose = require('mongoose')
 var BabyInfo = require("sleepservicemodels").BabyInfo(mongoose.connection);
 var utils = require('servicecommonutils')
-
+var conf = require("../config");
+var metric = require('metricsclient')(conf)
 /**
  * Get the baby info of the user.
  */
 router.get("/", function(req, res, next) {
+    metric.increaseCounter('SleepService:Usage:BabyInfo:Get', function (err, jsonObj) {
+        if (err != null)
+            winston.error(err.message, err)
+    })
+
     var id = req.headers['userId'];
     if (!id) {
         return res.json(utils.encodeResponseBody(req, {
@@ -41,6 +47,10 @@ router.get("/", function(req, res, next) {
 * req.body.birthday: in 'yyyy-MM-dd' format
 */
 router.post("/", function(req, res, next) {
+    metric.increaseCounter('SleepService:Usage:BabyInfo:AddOrUpdate', function (err, jsonObj) {
+        if (err != null)
+            winston.error(err.message, err)
+    })
     var id = req.headers['userId'];
     if (!id) {
         return res.json(utils.encodeResponseBody(req, {

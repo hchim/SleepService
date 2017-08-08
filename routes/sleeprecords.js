@@ -8,7 +8,8 @@ var TZDate = require('../utils/TZDate');
 var sqmodel = require('../utils/SleepQualityModel')
 var clone = require('clone');
 var utils = require('servicecommonutils')
-
+var conf = require("../config");
+var metric = require('metricsclient')(conf)
 /*
  * datetime: yyyy-MM-dd hh:mm:ss
  * timezone: timezone string
@@ -55,6 +56,10 @@ function toTZDateFormat(date, timezone) {
  * }
  */
 router.get("/:fromdate/:todate/:timezone", function(req, res, next) {
+    metric.increaseCounter('SleepService:Usage:SleepRecord:Search', function (err, jsonObj) {
+        if (err != null)
+            winston.error(err.message, err)
+    })
     var id = req.headers['userId'];
     if (!id) {
         return res.json(utils.encodeResponseBody(req, {
@@ -168,6 +173,10 @@ function calculateSleepQuality(arr, birthday) {
 
 /* Add sleep records. */
 router.post("/", function(req, res, next) {
+    metric.increaseCounter('SleepService:Usage:SleepRecord:Add', function (err, jsonObj) {
+        if (err != null)
+            winston.error(err.message, err)
+    })
     var id = req.headers['userId'];
     if (!id) {
         return res.json(utils.encodeResponseBody(req, {
@@ -207,6 +216,10 @@ router.post("/", function(req, res, next) {
 });
 
 router.delete("/:id", function(req, res, next) {
+    metric.increaseCounter('SleepService:Usage:SleepRecord:Delete', function (err, jsonObj) {
+        if (err != null)
+            winston.error(err.message, err)
+    })
     var id = req.headers['userId'];
     if (!id) {
         return res.json(utils.encodeResponseBody(req, {

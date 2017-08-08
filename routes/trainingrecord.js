@@ -4,11 +4,16 @@ var mongoose = require('mongoose')
 var TrainingRecord = require("sleepservicemodels").TrainingRecord(mongoose.connection);
 var TrainingPlan = require("sleepservicemodels").TrainingPlan(mongoose.connection);
 var utils = require('servicecommonutils')
-
+var conf = require("../config");
+var metric = require('metricsclient')(conf)
 /**
- * Add a sleep record.
+ * Add a training record.
  */
 router.post("/", function(req, res, next) {
+    metric.increaseCounter('SleepService:Usage:TrainingRecord:Add', function (err, jsonObj) {
+        if (err != null)
+            winston.error(err.message, err)
+    })
     var id = req.headers['userId'];
     if (!id) {
         return res.json(utils.encodeResponseBody(req, {
