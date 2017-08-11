@@ -10,6 +10,7 @@ var clone = require('clone');
 var utils = require('servicecommonutils')
 var conf = require("../config");
 var metric = require('metricsclient')(conf)
+var winston = utils.getWinston(conf.get('env'))
 /*
  * datetime: yyyy-MM-dd hh:mm:ss
  * timezone: timezone string

@@ -6,6 +6,7 @@ var TrainingPlan = require("sleepservicemodels").TrainingPlan(mongoose.connectio
 var utils = require('servicecommonutils')
 var conf = require("../config");
 var metric = require('metricsclient')(conf)
+var winston = utils.getWinston(conf.get('env'))
 /**
  * Add a training record.
  */

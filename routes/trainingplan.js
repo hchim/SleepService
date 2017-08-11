@@ -5,6 +5,7 @@ var TrainingPlan = require("sleepservicemodels").TrainingPlan(mongoose.connectio
 var utils = require('servicecommonutils')
 var conf = require("../config");
 var metric = require('metricsclient')(conf)
+var winston = utils.getWinston(conf.get('env'))
 
 router.get("/", function(req, res, next) {
     metric.increaseCounter('SleepService:Usage:TrainingPlan:Get', function (err, jsonObj) {

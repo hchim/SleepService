@@ -5,6 +5,7 @@ var BabyInfo = require("sleepservicemodels").BabyInfo(mongoose.connection);
 var utils = require('servicecommonutils')
 var conf = require("../config");
 var metric = require('metricsclient')(conf)
+var winston = utils.getWinston(conf.get('env'))
 /**
  * Get the baby info of the user.
  */
