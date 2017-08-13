@@ -7,20 +7,20 @@
     "test": "NODE_ENV=test mocha"
   },
   "dependencies": {
+    "async": "^2.5.0",
     "body-parser": "^1.17.2",
+    "clone": "^2.1.1",
+    "convict": "^4.0.0",
     "debug": "^3.0.0",
     "express": "^4.15.4",
-    "morgan": "^1.8.2",
     "file-stream-rotator": "^0.1.0",
-    "request": "^2.81.0",
+    "metricsclient": "git+ssh://git@github.com/hchim/MetricServiceClient.git",
     "moment-timezone": "^0.5.13",
-    "string-format-js": "^1.0.0",
-    "clone": "^2.1.1",
-    "async": "^2.5.0",
-    "convict": "^4.0.0",
-    "metricsclient": "git@github.com:hchim/MetricServiceClient.git",
-    "servicecommonutils": "git@github.com:hchim/ServiceCommonUtils.git",
-    "service-middlewares": "git@github.com:hchim/ServiceMiddlewares.git",
-    "sleepservicemodels": "git@github.com:hchim/SleepServiceModels.git"
+    "morgan": "^1.8.2",
+    "request": "^2.81.0",
+    "service-middlewares": "git+ssh://git@github.com/hchim/ServiceMiddlewares.git",
+    "servicecommonutils": "git+ssh://git@github.com/hchim/ServiceCommonUtils.git",
+    "sleepservicemodels": "git+ssh://git@github.com/hchim/SleepServiceModels.git",
+    "string-format-js": "^1.0.0"
   }
 }
